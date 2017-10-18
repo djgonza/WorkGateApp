@@ -1,0 +1,8 @@
+{
+	"name": "workgateproyect-app",
+	"app_id": "io.ionic.workgate",
+	"type": "ionic-angular",
+	"integrations": {
+		"cordova": {}
+	}
+}
