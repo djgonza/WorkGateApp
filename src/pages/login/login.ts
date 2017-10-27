@@ -37,44 +37,68 @@ export class LoginPage {
 
 		this.platform.ready()
 		.then(() => {
+			
 			console.log("Ready!!!!!");
+
+			//Intentamos el login silencioso de google
 			this.googlePlus.trySilentLogin({})
 			.then(user => {
-				console.log("user", JSON.stringify(user));
+
+				//this.doLoginInServerByGoogle (user);
+
 			})
 			.catch(err => {
-				console.log("err", err);
+				this.presentToastLoginError();
 			});
+
 		})
 		.catch(err => {
 			console.log("err", err);
 		})
 	}
 
-	// Attempt to login in through our User service
-	doLogin() {
-
-		console.log("Do Login By Google");
+	// Accion del boton login by google del html
+	doLoginByGoogle() {
 
 		this.googlePlus.login({})
 		.then(user => {
-			console.log("user", user);
+			this.doLoginInServerByGoogle (user);
 		})
 		.catch(err => {
-			console.log("err", err);
+			this.presentToastLoginError();
 		});
 
-		/*this.user.login(this.account).subscribe((resp) => {
-		  this.navCtrl.push(MainPage);
-		}, (err) => {
-		  this.navCtrl.push(MainPage);
-		  // Unable to log in
-		  let toast = this.toastCtrl.create({
+	}
+
+	// Usa el servicio para hacer login
+	doLoginInServerByGoogle (googleUser): void {
+
+		this.user.loginByGoogle(googleUser)
+		.subscribe((res: any) => {
+
+			if (res.token) {
+				console.log(res.token);
+				this.navCtrl.push(MainPage);
+			} else {
+				this.presentToastLoginError();
+			}
+
+		}, err => {
+			console.error(err);
+			this.presentToastLoginError();
+		})
+
+	}
+
+	// Mensaje de error al ejecutar el login
+	presentToastLoginError (): void {
+
+		let toast = this.toastCtrl.create({
 			message: this.loginErrorString,
 			duration: 3000,
 			position: 'top'
-		  });
-		  toast.present();
-		});*/
+		});
+		toast.present();
+
 	}
 }
